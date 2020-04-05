@@ -9,6 +9,8 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=tdmitriiv
       - MONGO_INITDB_ROOT_PASSWORD=537831
     volumes:
-    - ./mongo-volume:/data/db
+    - mongodata:/data/db
     ports:
     - '27017-27019:27017-27019'
+volumes:
+  mongodata:
