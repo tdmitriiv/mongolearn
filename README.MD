@@ -12,7 +12,6 @@
 
 #### выполняем комманды
 > show dbs - список баз данных  
-> use mongoLearn - создание или пе
->реключение на базу mongoLearn
+> use mongoLearn - создание или переключение на базу mongoLearn
 
 
