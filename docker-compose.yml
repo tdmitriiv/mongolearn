@@ -1,0 +1,14 @@
+version: '3'
+services:
+  mongolearn:
+    image: 'mongo'
+    restart: always
+    container_name: 'mongo-learn'
+    environment:
+      - MONGO_INITDB_DATABASE=mongoLearn
+      - MONGO_INITDB_ROOT_USERNAME=tdmitriiv
+      - MONGO_INITDB_ROOT_PASSWORD=537831
+    volumes:
+    - ./mongo-volume:/data/db
+    ports:
+    - '27017-27019:27017-27019'
