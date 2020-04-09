@@ -33,4 +33,18 @@
 > db.collectionName.find({}, {name: 1,_id: 0}) - фильтрация полей при выборке
 > db.collectionName.find({ "status.details.responsible": "Dmitry Trofimov"}).pretty() - поиск во вложенных объектах
 
+### Агрегация таблиц (отношения)
+```js
+db.news.aggregate([
+   {
+       $lookup: {
+           from: "author",
+           localField: "author",
+           foreignField: "_id",
+           as: "authorInfo"
+       }
+   } 
+])
+```
+
 
