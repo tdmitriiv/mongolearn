@@ -47,4 +47,26 @@ db.news.aggregate([
 ])
 ```
 
+### Validation schema
+создание валидации
+```js
+db.createCollection('posts', {
+  validator: {
+    $jsonSchema: {
+      // json схема
+    } 
+  }
+})
+```
+
+редактирование текущей валидации. Валидацию выкидывает предупреждения, вместо ошибок
+```js
+db.runCommand({
+  collMod: 'posts',
+  validator: {
+    ...
+  },
+  validationAction: 'warn'
+})
+```
 
