@@ -21,7 +21,23 @@
 > db.collectionName.find({}) - поиск всех
 > db.collectionName.find({}).pretty() - поиск с форматированием
 > db.collectionName.insertOne({ data: 1 }) - создание объекта
-> db.collectionName.insertMany([{ data: 1 }, { data: 2 }]) - создание нескольких объектов
+```js
+db.collectionName.insertMany(
+[
+  {
+    data: 1 
+  }, 
+  { 
+    data: 2 
+  }
+], options) 
+/*
+создание нескольких объектов
+  options - объект
+  ordered: false - продолжить добавлять, если предыдущий добавился с ошибкой
+*/
+```
+
 > db.collectionName.updateOne({ distance: 12000 }, {$set: { marker: 'delete' }}) - добавление нового поля marker для 1 объекта
 > db.collectionName.updateMany({}, { $set: { marker: 'toDelete' } }) - добавить / обновить поле marker всем объектам
 > db.collectionName.deleteOne({ data: 1 }) - удаление объекта с data=1
