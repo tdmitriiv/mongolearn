@@ -86,3 +86,14 @@ db.runCommand({
 })
 ```
 
+импорт данных из json файла
+```
+mongoimport home/original.json --authenticationDatabase admin -u tdmitriiv -p "537831" -d movieData -c movies --jsonArray --drop
+home/original.json - путь к файлу
+--authenticationDatabase admin - использование аутентификации
+-u tdmitriiv -p "537831" - логин / пароль
+-d movieData - база данных
+-c movies - коллекция
+--jsonArray - массив json
+--drop - дробнуть коллекцию, если уже существует
+```
