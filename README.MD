@@ -49,6 +49,23 @@ db.collectionName.insertMany(
 > db.collectionName.find({}, {name: 1,_id: 0}) - фильтрация полей при выборке
 > db.collectionName.find({ "status.details.responsible": "Dmitry Trofimov"}).pretty() - поиск во вложенных объектах
 
+### Модификаторы поиска
+```
+$exists - существование
+$gt, gtem, $lt, $lte - greater, less then equal
+db.collectionName.find({ name: { $type: ["number", "string"] }}).pretty() - проверки типа поля (number или string)
+$jsonSchema - поиск по json схеме, если разные объекты в коллекции
+db.movies.find({ summary: { $regex: /musical/}}) - поиск в тексте по регулярке
+db.products.find({ $expr: { $lt: ["$compare_price", "$price"] }}) - найти товары где скидочная цена меньше обычной
+```
+### Поиск по массиву
+```
+db.collectionName.find({ "field.property": value }) - поиск по полю property в массиве field
+db.collectionName.find({ "field": { $size: 3 } }) - записи, где длинна массива field равна 3
+db.movies.find({ "genre": { $all: ["fantasy", "horror"]} }) - записи, где есть жанры fantasy и horror без учета их порядка
+db.user.find({ "hobbies": { $elemMatch: { "title": "sports", "frequancy": { $gt: 3 } } }}) - пользователи, которые занимаются спортом больше чем 3 раза
+```
+
 ### Агрегация таблиц (отношения)
 ```js
 db.news.aggregate([

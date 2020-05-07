@@ -11,6 +11,7 @@ services:
     volumes:
     - mongodata:/data/db
     - ./import/original.json:/home/original.json
+    - ./import/original_assign_4.json:/home/original_assign_4.json
     ports:
     - '27017-27019:27017-27019'
 volumes:
