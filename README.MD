@@ -40,6 +40,71 @@ db.collectionName.insertMany(
 
 > db.collectionName.updateOne({ distance: 12000 }, {$set: { marker: 'delete' }}) - добавление нового поля marker для 1 объекта
 > db.collectionName.updateMany({}, { $set: { marker: 'toDelete' } }) - добавить / обновить поле marker всем объектам
+> db.users.updateMany({ "hobbies.title": "Sports" }, { $set: { isSporty: true} }) - добавить новое поле по критерию
+> db.users.updateOne({ _id: ObjectId("5eb820a35c5ae5d88acd9cbd") }, { $inc: { age: 1 } }) - инкремент значение
+> db.users.updateOne({ _id: ObjectId("5eb820a35c5ae5d88acd9cbd") }, { $inc: { age: -1 } }) - декремент значения
+> db.users.updateOne({ _id: ObjectId("5eb820a35c5ae5d88acd9cbd") }, { $min: { age: 30 } }) - установить значение в 30, если оно ниже текущего
+> db.users.updateOne({ _id: ObjectId("5eb820a35c5ae5d88acd9cbd") }, { $max: { age: 30 } }) - установить значение в 30, если оно выше текущего
+> db.users.updateOne({ _id: ObjectId("5eb820a35c5ae5d88acd9cbd") }, { $mul: { age: 1.1 } }) - умножить значение на 1.1
+> db.users.updateOne({}, { $unset: { phone: "" } }) - удалить поля phone с null значениями
+> db.users.updateMany({}, { $rename: { age: "totalAge" } }) - переименовать поле age в totalAge
+> db.users.updateOne({ name: "Kate" }, $set: { age: 25 }, { upsert: true }) - обновляет пользователя Kate, если его нет, то создает
+> db.users.updateMany({ hobbies: { $elemMatch: { title: "Sports", frequency: 4}} }, { $set: { "hobbies.$.newField": true } }) - добавить новое поле в объект из массива объектов hobbies, по критерию поиска
+> db.users.updateMany({}, { $inc: { "hobbies.$[].frequency": -1 } }) - уменьшить значение frequency у всех элементов массива
+```js
+// обновить значение в массиве только для элементов, где hobbies.frequency больше 4. Добавляет новое поле goodFrequency
+db.users.updateMany({ 
+  "hobbies.frequency": { 
+    $gt: 4
+  } 
+}, { 
+  $set: { 
+    "hobbies.$[el].goodFrequency": true 
+  } 
+}, { 
+  arrayFilters: [
+    { "el.frequency": { $gt: 4} }
+  ] 
+})
+
+// добавить новый элемент в массив
+db.users.updateOne({ name: "Kate" }, { $push: { hobbies: { title: "new hobbie", frequency: 1 } } })
+
+
+// добавить 2 новых элемента в массив
+// отсортировать по frequency
+// и оставить только 2 элемента
+db.users.updateOne({ name: "Kate" }, {
+  $push: { 
+    hobbies: {
+      $each: [{ title: "new hobbie", frequency: 1 }, { title: "new hobbie 2", frequency: 2 }],
+      $sort: {
+        frequency: -1
+      },
+      $slice: 2
+    }
+  }
+}) 
+
+// удалить элемент из массива по критерию
+db.users.updateOne({ name: "Kate" }, {
+  $pull: {
+    hobbies: {
+      title: "new hobbie"
+    }
+  }
+})
+
+// удаляет последний элемент массива
+db.users.updateOne({ name: "Kate" }, { $pop: { hobbies: 1 } })
+
+// удаляет первый элемент массива
+db.users.updateOne({ name: "Kate" }, { $pop: { hobbies: -1 } })
+
+// добавляет элемент в массив, но дублируют элементы
+db.users.updateOne({ name: "Kate" }, { $addToSet: { hobbies: { title: "new hobbie", frequency: 1 } } })
+```
+
 > db.collectionName.deleteOne({ data: 1 }) - удаление объекта с data=1
 > db.collectionName.deleteMany({marker: 'toDelete'}) - удаление объектов с marker'ом
 > db.collectionName.replaceOne({ data: 1}, {data: 2}) - заменить объект по критерию data=1
@@ -113,4 +178,27 @@ home/original.json - путь к файлу
 -c movies - коллекция
 --jsonArray - массив json
 --drop - дробнуть коллекцию, если уже существует
+```
+
+### сортировка курсора
+```js
+// 1 по возрастанию , -1 по убыванию
+db.collectionName.find().sort({ field: 1, field2: 1}) 
+// сортировка -> skip -> limit
+db.collectionName.find().sort({ field: 1, field2: 1}).skip(100).limit(10)
+```
+
+## projection (выборка полей)
+```js
+// получить только поля name, genres, runtime, rating.average
+db.movies.find({}, {name: 1, genres: 1, runtime: 1, "rating.average": 1}).pretty()
+db.movies.find({ genres: "Drama" }, { "genres.$": 1}).pretty()
+
+// получить первый жанр из массива
+db.movies.find({ genres: {$all: ["Horror", "Drama"]}  }, { "genres.$": 1}).pretty()
+
+// получить 2 жанра из массива [skip, length]
+db.movies.find({ "rating.average": {$gt: 7}  }, { "genres": {$slice: 2}, name: 1  })
+// получить 2 и 3 жанра из массива
+db.movies.find({ "rating.average": {$gt: 7}  }, { "genres": {$slice: [1, 2]}, name: 1  })
 ```
